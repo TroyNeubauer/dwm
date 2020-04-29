@@ -234,6 +234,8 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 
+static void setTags(const Arg *arg);
+
 /* variables */
 static const char broken[] = "broken";
 static char stext[256];
@@ -2123,6 +2125,20 @@ zoom(const Arg *arg)
 			return;
 	pop(c);
 }
+
+void setTags(const Arg *arg)
+{
+	for (Monitor* m = mons; m; m = m->next)
+	{
+		if ((arg->ui & TAGMASK) == m->tagset[m->seltags]) continue;
+
+		m->seltags ^= 1; /* toggle sel tagset */
+		if (arg->ui & TAGMASK) m->tagset[m->seltags] = arg->ui & TAGMASK;
+		focus(NULL);
+		arrange(m);
+	}
+}
+
 
 int
 main(int argc, char *argv[])
